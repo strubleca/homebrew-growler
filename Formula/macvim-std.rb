@@ -1,5 +1,5 @@
 # Reference: https://github.com/macvim-dev/macvim/wiki/building
-class Macvim < Formula
+class MacvimStd < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
   url "https://github.com/macvim-dev/macvim/archive/snapshot-171.tar.gz"
