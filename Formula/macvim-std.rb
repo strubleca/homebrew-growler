@@ -16,6 +16,7 @@ class MacvimStd < Formula
     sha256 catalina:       "d884f16d3c245adde4cb559f40a98db6fbb2ade43b8fb9c11698fb6145b086db"
   end
 
+  env :std
   depends_on xcode: :build
   depends_on "cscope"
   depends_on "gettext"
