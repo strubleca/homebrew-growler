@@ -2,18 +2,19 @@
 class MacvimStd < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
-  url "https://github.com/macvim-dev/macvim/archive/snapshot-173.tar.gz"
-  version "9.0.0065"
-  sha256 "2b9208fa7d201aa1a5b1ac8f7ebba6d75f37cbfbaaae3b55b81d27c80eb50785"
+  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-174.tar.gz"
+  version "9.0.472"
+  sha256 "9481eeca43cfc0a7cf0604088c4b536f274821adb62b0daefada978aa7f4c41b"
   license "Vim"
+  revision 1
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
   bottle do
-    sha256 arm64_monterey: "bc9f6f3f22cd28592cdc1dd1b666e0abd933dcb5bbeb66b6e5f64a1f23e5a7e7"
-    sha256 arm64_big_sur:  "fea10182a156107b709c498210f7abe7533735836c0908b4750917a7de31e499"
-    sha256 monterey:       "cb55428bb68e448e9723bf51b8dfc8fea7da318047dfa07ff6c44b1b08e73166"
-    sha256 big_sur:        "b6cca47b50f3065c0ea377cb1ebd1b485cfb6417065bbd6100497c77ca44c8dc"
-    sha256 catalina:       "92b38c13544ea29478301b13f4b39af205fd0c0e9d6f3bc48192dbc971410ea4"
+    sha256 arm64_monterey: "a22ed2ccf2de13d727bb47798cdbec5595634e24e7b9ab70d1d1ef7836fe41b8"
+    sha256 arm64_big_sur:  "3f990eede6cb56c75bbe5f30aa8c00179a14479eaf4f4628a51ca430b8ede725"
+    sha256 monterey:       "cc2ac74c81bf5dcf1e759bf2965b8c1c66a4aa31fc8662a179c9eae7dcaf31ed"
+    sha256 big_sur:        "7529db993173ac24d9239857fa8fd95f58b7a054b3b9243fc21ae58d358597b8"
+    sha256 catalina:       "6403a4d6c0330ecaa97c50d6c373c896f00b9f41ae02b7f1ac9ce685329c058f"
   end
 
   env :std
@@ -25,8 +26,7 @@ class MacvimStd < Formula
   depends_on "python@3.10"
   depends_on "ruby"
 
-  conflicts_with "vim",
-    because: "vim and macvim both install vi* binaries"
+  conflicts_with "vim", because: "vim and macvim both install vi* binaries"
 
   def install
     # Avoid issues finding Ruby headers
@@ -34,6 +34,10 @@ class MacvimStd < Formula
 
     # MacVim doesn't have or require any Python package, so unset PYTHONPATH
     ENV.delete("PYTHONPATH")
+
+    # We don't want the deployment target to include the minor version on Big Sur and newer.
+    # https://github.com/Homebrew/homebrew-core/issues/111693
+    ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version
 
     # make sure that CC is set to "clang"
     ENV.clang
@@ -73,7 +77,7 @@ class MacvimStd < Formula
     assert_match "+gettext", output
 
     # Simple test to check if MacVim was linked to Homebrew's Python 3
-    py3_exec_prefix = shell_output(Formula["python@3.10"].opt_bin/"python3-config --exec-prefix")
+    py3_exec_prefix = shell_output(Formula["python@3.10"].opt_libexec/"bin/python-config --exec-prefix")
     assert_match py3_exec_prefix.chomp, output
     (testpath/"commands.vim").write <<~EOS
       :python3 import vim; vim.current.buffer[0] = 'hello python3'
