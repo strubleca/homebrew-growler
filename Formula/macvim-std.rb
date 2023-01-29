@@ -6,24 +6,26 @@ class MacvimStd < Formula
   version "9.0.472"
   sha256 "9481eeca43cfc0a7cf0604088c4b536f274821adb62b0daefada978aa7f4c41b"
   license "Vim"
-  revision 1
+  revision 2
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
   bottle do
-    sha256 arm64_monterey: "a22ed2ccf2de13d727bb47798cdbec5595634e24e7b9ab70d1d1ef7836fe41b8"
-    sha256 arm64_big_sur:  "3f990eede6cb56c75bbe5f30aa8c00179a14479eaf4f4628a51ca430b8ede725"
-    sha256 monterey:       "cc2ac74c81bf5dcf1e759bf2965b8c1c66a4aa31fc8662a179c9eae7dcaf31ed"
-    sha256 big_sur:        "7529db993173ac24d9239857fa8fd95f58b7a054b3b9243fc21ae58d358597b8"
-    sha256 catalina:       "6403a4d6c0330ecaa97c50d6c373c896f00b9f41ae02b7f1ac9ce685329c058f"
+    sha256 arm64_ventura:  "6bfdc09ca2b99add2aab85877dc9e44ff37c73e9f8f594f4b619d35df35d8558"
+    sha256 arm64_monterey: "b223801cfc94df5f6ca8a11c4d0be1ae240559ab32461d325505a970bbca7fc7"
+    sha256 arm64_big_sur:  "3ea26eb1b2b4da3a3caed0ef72fcc155082b1c968d04723ed6c50a9caa8495f0"
+    sha256 ventura:        "bd2a166bbded6d54435acb2b27a1f13f33a36cd967f1696df458ef5ad5d66ee9"
+    sha256 monterey:       "e7ffda7e075604b7566b18fbd1aad6ed0509212e32f62e1d477d4c82916645cb"
+    sha256 big_sur:        "9f1ce443270f7a6dcb74ffc1c71348f2dccd232c70e88b3420dd171a80670b50"
   end
 
   env :std
+
   depends_on xcode: :build
   depends_on "cscope"
   depends_on "gettext"
   depends_on "lua"
   depends_on :macos
-  depends_on "python@3.10"
+  depends_on "python@3.11"
   depends_on "ruby"
 
   conflicts_with "vim", because: "vim and macvim both install vi* binaries"
@@ -77,7 +79,7 @@ class MacvimStd < Formula
     assert_match "+gettext", output
 
     # Simple test to check if MacVim was linked to Homebrew's Python 3
-    py3_exec_prefix = shell_output(Formula["python@3.10"].opt_libexec/"bin/python-config --exec-prefix")
+    py3_exec_prefix = shell_output(Formula["python@3.11"].opt_libexec/"bin/python-config --exec-prefix")
     assert_match py3_exec_prefix.chomp, output
     (testpath/"commands.vim").write <<~EOS
       :python3 import vim; vim.current.buffer[0] = 'hello python3'
