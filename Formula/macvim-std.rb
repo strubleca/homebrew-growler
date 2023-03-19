@@ -2,20 +2,25 @@
 class MacvimStd < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
-  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-174.tar.gz"
-  version "9.0.472"
-  sha256 "9481eeca43cfc0a7cf0604088c4b536f274821adb62b0daefada978aa7f4c41b"
+  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-176.tar.gz"
+  version "9.0.1276"
+  sha256 "e729964b4979f42fd2701236adb9bea35c6cf3981aa02ae7790a240fb92cf39e"
   license "Vim"
-  revision 2
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
+  livecheck do
+    url "https://github.com/macvim-dev/macvim/releases?q=prerelease%3Afalse&expanded=true"
+    regex(/Updated\s+to\s+Vim\s+v?(\d+(?:\.\d+)+)/i)
+    strategy :page_match
+  end
+
   bottle do
-    sha256 arm64_ventura:  "6bfdc09ca2b99add2aab85877dc9e44ff37c73e9f8f594f4b619d35df35d8558"
-    sha256 arm64_monterey: "b223801cfc94df5f6ca8a11c4d0be1ae240559ab32461d325505a970bbca7fc7"
-    sha256 arm64_big_sur:  "3ea26eb1b2b4da3a3caed0ef72fcc155082b1c968d04723ed6c50a9caa8495f0"
-    sha256 ventura:        "bd2a166bbded6d54435acb2b27a1f13f33a36cd967f1696df458ef5ad5d66ee9"
-    sha256 monterey:       "e7ffda7e075604b7566b18fbd1aad6ed0509212e32f62e1d477d4c82916645cb"
-    sha256 big_sur:        "9f1ce443270f7a6dcb74ffc1c71348f2dccd232c70e88b3420dd171a80670b50"
+    sha256 arm64_ventura:  "5f6f4d5b4c3992cfd29768219247c549934b9916a618e69fa91a0e45c820a51e"
+    sha256 arm64_monterey: "27e1a597702320e3fd77e5b07c76076b9520d34822d86d7bb85605232ca87a59"
+    sha256 arm64_big_sur:  "ef35ccc4db58f560b8dd8f64fb45da71f9519fcc2b3e03e8f510bc7913e53b86"
+    sha256 ventura:        "0b7c6adfdcbe8ac0fdd5682c055da621d31424ab4a997208345d882d6f4770c4"
+    sha256 monterey:       "6a218196af8bac6a528d7e9dfa8b0f2dd1fa2357da8bd47887cd0af2026eb7b6"
+    sha256 big_sur:        "bd6018f7a3e608fc6f143c4e79c3388e05284cc8a689b2ee39a6035ce14eeb0b"
   end
 
   env :std
