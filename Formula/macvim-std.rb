@@ -2,9 +2,9 @@
 class MacvimStd < Formula
   desc "GUI for vim, made for macOS"
   homepage "https://github.com/macvim-dev/macvim"
-  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-180.tar.gz"
-  version "9.1.0727"
-  sha256 "e1bc74beb3ee594503b5e1e20a9d075b5972bbaa642a91921116531475f46a6f"
+  url "https://github.com/macvim-dev/macvim/archive/refs/tags/release-181.tar.gz"
+  version "9.1.1128"
+  sha256 "ee4127ff18f55f04b69e401fc444c94b9e4d2bf60580ed18e85b78f2e34efbd3"
   license "Vim"
   head "https://github.com/macvim-dev/macvim.git", branch: "master"
 
@@ -22,6 +22,17 @@ class MacvimStd < Formula
     end
   end
 
+  no_autobump! because: :requires_manual_review
+
+  bottle do
+    sha256 cellar: :any, arm64_tahoe:   "606e557b84fb2fc546388d022369d6362c0c8486e81ebb8d9a2c076365c91d22"
+    sha256 cellar: :any, arm64_sequoia: "7eed55dfdd99df0050437af8528d20382f13760845ae638f1bf505a415a3bfa3"
+    sha256 cellar: :any, arm64_sonoma:  "55fe4b8cd65abdae6855028c63607cde1a7d85e3a47de4673ced52abbb65128b"
+    sha256 cellar: :any, arm64_ventura: "17523b2cee9b5c9de657016799262bf547c1c8eb2cf20bac7169691490fc2c91"
+    sha256 cellar: :any, sonoma:        "2be24658c5b61ed7f725cc952b0a75b02c5fa53701921aec00af563f829089c5"
+    sha256 cellar: :any, ventura:       "848643f8227520cbc1f619dff734d8e3521568d4b2dd275edf98029761bb1760"
+  end
+
   env :std
 
   depends_on "gettext" => :build
@@ -35,6 +46,7 @@ class MacvimStd < Formula
 
   conflicts_with "ex-vi", because: "both install `vi` and `view` binaries"
   conflicts_with "vim", because: "both install vi* binaries"
+  conflicts_with cask: "macvim-app"
 
   def install
     # Avoid issues finding Ruby headers
@@ -84,13 +96,57 @@ class MacvimStd < Formula
     assert_match "+sodium", output
 
     # Simple test to check if MacVim was linked to Homebrew's Python 3
-    py3_exec_prefix = shell_output(Formula["python@3.13"].opt_libexec/"bin/python-config --exec-prefix")
+    py3_exec_prefix = shell_output("#{Formula["python@3.13"].opt_libexec}/bin/python-config --exec-prefix")
     assert_match py3_exec_prefix.chomp, output
-    (testpath/"commands.vim").write <<~EOS
+    (testpath/"commands.vim").write <<~VIM
       :python3 import vim; vim.current.buffer[0] = 'hello python3'
       :wq
-    EOS
+    VIM
     system bin/"mvim", "-v", "-T", "dumb", "-s", "commands.vim", "test.txt"
     assert_equal "hello python3", (testpath/"test.txt").read.chomp
   end
+end
+cask "macvim-app" do
+  version "181,9.1.1128"
+  sha256 "ebcab36471c0ddfb91630eae285f57ac9a9a7cb4b233413128aba9039e6a467f"
+
+  url "https://github.com/macvim-dev/macvim/releases/download/release-#{version.csv.first}/MacVim.dmg"
+  name "MacVim"
+  desc "Text editor"
+  homepage "https://github.com/macvim-dev/macvim"
+
+  livecheck do
+    url "https://macvim.org/appcast/latest.xml"
+    strategy :sparkle do |items|
+      item = items.find { |item| item.channel.nil? }
+
+      "#{item.version},#{item.short_version}"
+    end
+  end
+
+  auto_updates true
+
+  app "MacVim.app"
+
+  %w[
+    gview
+    gvim
+    gvimdiff
+    gvimex
+    mview
+    mvim
+    mvimdiff
+    mvimex
+    view
+    vim
+    vimdiff
+    vimex
+    vi
+  ].each { |link_name| binary "#{appdir}/MacVim.app/Contents/bin/mvim", target: link_name }
+
+  zap trash: [
+    "~/Library/Caches/org.vim.MacVim",
+    "~/Library/Preferences/org.vim.MacVim.LSSharedFileList.plist",
+    "~/Library/Preferences/org.vim.MacVim.plist",
+  ]
 end
